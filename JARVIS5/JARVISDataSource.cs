@@ -13,10 +13,10 @@ namespace JARVIS5
         public string Database { get; set; }
         public string UserID { get; set; }
         public string Password { get; set; }
-        public string AuthType { get; }
+        public string AuthType { private set; get; }
         private string StoredProcedureSavePath = @"C:\JARVIS5\UserDefinedDataSources\StoredProcedures";
-        private string TableSavePath = @"";
-        private string QuerySavePath = @"";
+        private string TableSavePath = @"C:\JARVIS5\UserDefinedDataSources\Tables";
+        private string QuerySavePath = @"C:\JARVIS5\UserDefinedDataSources\Queries";
         public JARVISDataSource(string Server, string Database)
         {
             this.Server = Server;
@@ -76,11 +76,19 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
+                SqlConnection NewConnection = GetSQLConnection();
+                SqlCommand StoredProcedureNamesQuery = new SqlCommand("", NewConnection);
+                NewConnection.Open();
+                SqlDataReader StoredProcedureNamesQueryReader = StoredProcedureNamesQuery.ExecuteReader();
+                while (StoredProcedureNamesQueryReader.Read())
+                {
 
+                }
+                NewConnection.Close();
             }
             catch(Exception e)
             {
-
+                SO = new StatusObject(StatusCode.FAILURE, "GetStoredProceduresFailure", e.Message, e.ToString());
             }
             return SO;
         }
