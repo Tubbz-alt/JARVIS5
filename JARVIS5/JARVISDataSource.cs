@@ -14,7 +14,9 @@ namespace JARVIS5
         public string UserID { get; set; }
         public string Password { get; set; }
         public string AuthType { get; }
-        private string StoredProcedureSaveLocation = @"C:\JARVIS5\UserDefinedDataSources\StoredProcedures";
+        private string StoredProcedureSavePath = @"C:\JARVIS5\UserDefinedDataSources\StoredProcedures";
+        private string TableSavePath = @"";
+        private string QuerySavePath = @"";
         public JARVISDataSource(string Server, string Database)
         {
             this.Server = Server;
@@ -72,16 +74,40 @@ namespace JARVIS5
         public StatusObject GetStoredProcedures()
         {
             StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+
+            }
             return SO;
         }
         public StatusObject GetTables()
         {
             StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+
+            }
             return SO;
         }
         public StatusObject GetIndexedSelectQueries()
         {
             StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+
+            }
             return SO;
         }
     }
