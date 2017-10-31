@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JARVIS5
 {
-    public class JARVISDataSource
+    public partial class JARVISDataSource
     {
         public string Server { get; set; }
         public string Database { get; set; }
@@ -98,6 +98,19 @@ namespace JARVIS5
             return SO;
         }
         public StatusObject GetIndexedSelectQueries()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO;
+        }
+        public StatusObject SearchTables()
         {
             StatusObject SO = new StatusObject();
             try
