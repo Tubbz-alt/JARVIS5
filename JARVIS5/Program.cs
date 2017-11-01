@@ -15,25 +15,45 @@ namespace JARVIS5
             /*Execution of all StartUp Files*/
 
             /*Execution of batch files first*/
-            foreach(string arg in args)
+            if(args.Length > 0)
             {
-                try
+                
+                foreach (string arg in args)
                 {
-                    Console.WriteLine(arg);
+                    try
+                    {
+                        Console.WriteLine(arg);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
                 }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
+                
             }
 
-            /*Regular Program Execution*/
-            Console.Write("Enter Command: ");
-            userInput = Console.ReadLine();
+
+            if(args.Length > 0)
+            {
+                /*If batch execution, do not require user input*/
+                Console.WriteLine("--------------------------------------------------------------------");
+                Console.WriteLine("Start Batch Execution");
+                Console.WriteLine("--------------------------------------------------------------------");
+                userInput = string.Join(" ", args);
+                Console.WriteLine(userInput);
+            }
+            else
+            {
+                /*If non-batch, require user input*/
+                Console.Write("Enter Command: ");
+                userInput = Console.ReadLine();
+            }
+            
             while(programRunning)
             {
                 try
                 {
+                    JARVISLogging.LogCommand(userInput);
                     if (userInput != "exit")
                     {
                         List<string> commandParameters = userInput.Split(' ').ToList();
@@ -46,16 +66,30 @@ namespace JARVIS5
                         else if (primaryCommand == "datasource")
                         {
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
-                            JARVISDataSource newDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
-                            newDataSource.GetSQLConnection();
-                            newDataSource.ExportStoredProcedures();
+                            if(secondaryCommand == "exportssp")
+                            {
+                                JARVISDataSource newDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
+                                newDataSource.GetSQLConnection();
+                                newDataSource.ExportStoredProcedures();
+                            }
                         }
                         else
                         {
                             Console.WriteLine("{0} is not a recognized command", primaryCommand);
                         }
-                        Console.Write("Enter Command: ");
-                        userInput = Console.ReadLine();
+
+                        if (args.Length > 0)
+                        {
+                            Console.WriteLine("--------------------------------------------------------------------");
+                            Console.WriteLine("End Batch Execution");
+                            Console.WriteLine("--------------------------------------------------------------------");
+                            userInput = "exit";
+                        }
+                        else
+                        {
+                            Console.Write("Enter Command: ");
+                            userInput = Console.ReadLine();
+                        }
                     }
                     else
                     {

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace JARVIS5
 {
@@ -15,7 +16,7 @@ namespace JARVIS5
         public string UserID { get; set; }
         public string Password { get; set; }
         public string AuthType { private set; get; }
-        private string StoredProcedureSavePath = @"C:\JARVIS5\UserDefinedDataSources\StoredProcedures";
+        private string DataSourceSavePath = @"C:\JARVIS5\UserDefinedDataSources";
         private string TableSavePath = @"C:\JARVIS5\UserDefinedDataSources\Tables";
         private string QuerySavePath = @"C:\JARVIS5\UserDefinedDataSources\Queries";
         public JARVISDataSource(string Server, string Database)
@@ -96,7 +97,7 @@ namespace JARVIS5
                 NewConnection.Close();
 
                 // Get Stored Procedure Text and Copy it to file
-                string SaveDirectory = String.Format(@"{0}\{1}", StoredProcedureSavePath, this.Database);
+                string SaveDirectory = String.Format(@"{0}\{1}\StoredProcedures", DataSourceSavePath, this.Database);
                 Directory.CreateDirectory(SaveDirectory);
                 foreach (string StoredProcedureName in StoredProcedureNamesList)
                 {
@@ -109,7 +110,7 @@ namespace JARVIS5
                     SqlDataReader StoredProcedureTextQueryReader = StoredProcedureTextQuery.ExecuteReader();
                     while (StoredProcedureTextQueryReader.Read())
                     {
-                        StreamWriter StoredProcedureTextFile = new StreamWriter(String.Format(@"{0}\{1}.txt", SaveDirectory, StoredProcedureName));
+                        StreamWriter StoredProcedureTextFile = new StreamWriter(String.Format(@"{0}\{1}.sql", SaveDirectory, StoredProcedureName));
                         StoredProcedureTextFile.Write(StoredProcedureTextQueryReader[0].ToString());
                         StoredProcedureTextFile.Close();
                     }
@@ -158,6 +159,45 @@ namespace JARVIS5
             catch(Exception e)
             {
 
+            }
+            return SO;
+        }
+        public StatusObject SearchStoredProcedures()
+        {
+            StatusObject SO = new StatusObject();
+            return SO;
+        }
+        public StatusObject SaveToTextFile()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO;
+        }
+        public StatusObject ExecuteQuery(string Query)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                SqlConnection DataSourceConnection = GetSQLConnection();
+                SqlCommand CommandToExecute = new SqlCommand(Query, DataSourceConnection);
+                DataSourceConnection.Open();
+                SqlDataReader CommandToExecuteReader = CommandToExecute.ExecuteReader();
+                while (CommandToExecuteReader.Read())
+                {
+                    // Do something
+                }
+                DataSourceConnection.Close();
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "DataSource_ExecuteQuery_FAILURE", e.Message, e.ToString());
             }
             return SO;
         }
