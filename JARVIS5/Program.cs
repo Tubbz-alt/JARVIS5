@@ -17,24 +17,6 @@ namespace JARVIS5
             /*Execution of batch files first*/
             if(args.Length > 0)
             {
-                
-                foreach (string arg in args)
-                {
-                    try
-                    {
-                        Console.WriteLine(arg);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                    }
-                }
-                
-            }
-
-
-            if(args.Length > 0)
-            {
                 /*If batch execution, do not require user input*/
                 Console.WriteLine("--------------------------------------------------------------------");
                 Console.WriteLine("Start Batch Execution");
