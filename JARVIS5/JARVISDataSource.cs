@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,20 +72,49 @@ namespace JARVIS5
             }
             return NewConnection;
         }
-        public StatusObject GetStoredProcedures()
+        public StatusObject ExportStoredProcedures()
         {
             StatusObject SO = new StatusObject();
             try
             {
                 SqlConnection NewConnection = GetSQLConnection();
-                SqlCommand StoredProcedureNamesQuery = new SqlCommand("", NewConnection);
+                SqlCommand StoredProcedureNamesQuery = new SqlCommand(
+                    @"select STOREDPROCNAME=SPECIFIC_NAME from information_schema.routines" +
+                    " where routine_type = 'PROCEDURE'" +
+                    " and Left(Routine_Name, 3) NOT IN('sp_', 'xp_', 'ms_', 'dt_')" +
+                    " order by SPECIFIC_NAME asc", 
+                    NewConnection);
+                // Get Stored Procedure Names
+                List<string> StoredProcedureNamesList = new List<string>();
                 NewConnection.Open();
                 SqlDataReader StoredProcedureNamesQueryReader = StoredProcedureNamesQuery.ExecuteReader();
                 while (StoredProcedureNamesQueryReader.Read())
                 {
-
+                    Console.WriteLine(StoredProcedureNamesQueryReader[0].ToString());
+                    StoredProcedureNamesList.Add(StoredProcedureNamesQueryReader[0].ToString());
                 }
                 NewConnection.Close();
+
+                // Get Stored Procedure Text and Copy it to file
+                string SaveDirectory = String.Format(@"{0}\{1}", StoredProcedureSavePath, this.Database);
+                Directory.CreateDirectory(SaveDirectory);
+                foreach (string StoredProcedureName in StoredProcedureNamesList)
+                {
+                    SqlCommand StoredProcedureTextQuery = new SqlCommand(
+                        String.Format(
+                            "select OBJECT_DEFINITION(OBJECT_ID('{0}'))", 
+                            StoredProcedureName),
+                        NewConnection);
+                    NewConnection.Open();
+                    SqlDataReader StoredProcedureTextQueryReader = StoredProcedureTextQuery.ExecuteReader();
+                    while (StoredProcedureTextQueryReader.Read())
+                    {
+                        StreamWriter StoredProcedureTextFile = new StreamWriter(String.Format(@"{0}\{1}.txt", SaveDirectory, StoredProcedureName));
+                        StoredProcedureTextFile.Write(StoredProcedureTextQueryReader[0].ToString());
+                        StoredProcedureTextFile.Close();
+                    }
+                    NewConnection.Close();
+                }
             }
             catch(Exception e)
             {

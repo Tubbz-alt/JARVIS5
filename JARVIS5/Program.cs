@@ -48,13 +48,12 @@ namespace JARVIS5
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
                             JARVISDataSource newDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
                             newDataSource.GetSQLConnection();
+                            newDataSource.ExportStoredProcedures();
                         }
                         else
                         {
                             Console.WriteLine("{0} is not a recognized command", primaryCommand);
                         }
-                        
-
                         Console.Write("Enter Command: ");
                         userInput = Console.ReadLine();
                     }
