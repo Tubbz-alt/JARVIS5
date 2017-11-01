@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JARVISDataSource.cs" />
+    <Compile Include="JARVISFile.cs" />
+    <Compile Include="JARVISFileCustomAlgorithms.cs" />
     <Compile Include="JARVISLogging.cs" />
     <Compile Include="JARVISStartup.cs" />
     <Compile Include="Program.cs" />

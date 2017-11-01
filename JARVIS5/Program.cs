@@ -55,6 +55,16 @@ namespace JARVIS5
                                 newDataSource.ExportStoredProcedures();
                             }
                         }
+                        else if (primaryCommand == "read")
+                        {
+                            string filePath = userInput.Replace("read", "").Trim();
+                            JARVISFile targetFile = new JARVISFile(filePath);
+                            StatusObject SO_ReadFile = targetFile.AnalyzeClaimAudit();
+                            if(SO_ReadFile.Status == StatusCode.FAILURE)
+                            {
+                                Console.WriteLine(SO_ReadFile.ErrorStackTrace);
+                            }
+                        }
                         else
                         {
                             Console.WriteLine("{0} is not a recognized command", primaryCommand);
