@@ -12,9 +12,10 @@ namespace JARVIS5
         {
             bool programRunning = true;
             string userInput = "";
+            JARVISDataSource primaryDataSource;
+            Dictionary<string, JARVISDataSource> userDefinedDataSources = new Dictionary<string, JARVISDataSource>();
             /*Execution of all StartUp Files*/
-            
-            JARVISStartup.ConfigureJARVISDataSource();
+            JARVISConfig.StartUpDiagnostics();
 
             /*Execution of batch files first*/
             if(args.Length > 0)
@@ -73,9 +74,11 @@ namespace JARVIS5
                         else if (primaryCommand == "findtable")
                         {
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
-                            string target = commandParameters.ElementAtOrDefault(2);
+                            
                             if(secondaryCommand == "columnname")
                             {
+                                string target = userInput.Replace("findtable columnname", "").Trim();
+                                Console.WriteLine(target);
                                 JARVISDataSource TargetDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
                                 TargetDataSource.SearchTablesByColumnName(target);
 

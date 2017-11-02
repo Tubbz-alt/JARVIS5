@@ -48,13 +48,21 @@ namespace JARVIS5
         public JARVISDataSource(string ConnectionString)
         {
             List<string> ConnectionStringParameters = ConnectionString.Split(';').Select(x => x.Trim()).ToList();
-            if(ConnectionStringParameters.Count == 3)
+            if(ConnectionStringParameters.Count == 2)
             {
 
             }
-            else if (ConnectionStringParameters.Count == 5)
+            else if (ConnectionStringParameters.Count == 4)
             {
 
+            }
+            else
+            {
+                this.Server = null;
+                this.Database = null;
+                this.UserID = null;
+                this.Password = null;
+                this.AuthType = null;
             }
         }
         public string GetConnectionString()
@@ -200,25 +208,37 @@ namespace JARVIS5
             }
             return SO;
         }
-        public StatusObject SearchTablesByColumnName(string TableName)
+        public StatusObject SearchTablesByColumnName(string TableNames)
         {
             StatusObject SO = new StatusObject();
             try
             {
                 SqlConnection NewConnection = GetSQLConnection();
-                SqlCommand TableSearchCommand = new SqlCommand(
-                    String.Format("select TABLE_NAME, COLUMN_NAME from information_schema.columns where COLUMN_NAME like '{0}'", TableName),
-                    NewConnection);
-                NewConnection.Open();
-                SqlDataReader TableSearchCommandReader = TableSearchCommand.ExecuteReader();
-                while (TableSearchCommandReader.Read())
+                List<string> TableNameList = TableNames.Split(',').ToList();
+                
+                foreach (string TableName in TableNameList)
                 {
-                    Console.WriteLine("{0} {1}", TableSearchCommandReader[0], TableSearchCommandReader[1]);
-                }
+                    SqlCommand TableSearchCommand = new SqlCommand(
+                        String.Format("select TABLE_NAME, COLUMN_NAME from information_schema.columns where COLUMN_NAME like '{0}'", TableName),
+                        NewConnection);
+                    NewConnection.Open();
+                    SqlDataReader TableSearchCommandReader = TableSearchCommand.ExecuteReader();
+                    Console.WriteLine("-----------------------------------------------------");
+                    Console.WriteLine("Search results for {0}", TableName);
+                    Console.WriteLine("-----------------------------------------------------");
+                    while (TableSearchCommandReader.Read())
+                    {
+                        Console.WriteLine("{0} {1}", TableSearchCommandReader[0], TableSearchCommandReader[1]);
+                    }
+                    Console.WriteLine("-----------------------------------------------------");
+                    Console.WriteLine("Search results for {0}", TableName);
+                    Console.WriteLine("-----------------------------------------------------");
+                    NewConnection.Close();
+                }   
             }
             catch(Exception e)
             {
-
+                Console.WriteLine(e.ToString());
             }
             return SO = new StatusObject();
         }
