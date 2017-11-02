@@ -46,7 +46,8 @@ namespace JARVIS5
                         /*Command Sets*/
                         if (primaryCommand == "help")
                         {
-
+                            string secondaryCommand = commandParameters.ElementAtOrDefault(1);
+                            JARVISRuntime.Help(secondaryCommand);
                         }
                         else if (primaryCommand == "datasource")
                         {
