@@ -10,11 +10,13 @@ namespace JARVIS5
 {
     public partial class JARVISFile
     {
+        private string CustomAlgorithmLogPath = @"C:\JARVIS5\FileCustomAlgorithmLogs";
         public StatusObject AnalyzeClaimAudit()
         {
             StatusObject SO = new StatusObject();
             try
             {
+                Directory.CreateDirectory(CustomAlgorithmLogPath);
                 Console.WriteLine("----------------------------------------------------------------------------");
                 Console.WriteLine("Claim Audit Analysis Start");
                 Console.WriteLine("----------------------------------------------------------------------------");
@@ -22,8 +24,11 @@ namespace JARVIS5
                 FileStream TargetFile = File.Open(this.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 BufferedStream TargetFileBuffered = new BufferedStream(TargetFile);
                 StreamReader TargetFileBufferedReader = new StreamReader(TargetFileBuffered);
+                
                 string Record;
                 int Count = 0;
+                List<int> ErrorLines = new List<int>();
+                List<string> ErrorLineDetails = new List<string>();
                 while ((Record = TargetFileBufferedReader.ReadLine()) != null)
                 {
                     List<string> Fields = Record.Split('^').ToList();
@@ -31,10 +36,13 @@ namespace JARVIS5
                     {
                         Console.WriteLine(Record);
                         Thread.Sleep(3000);
-                        
                     }
                     else
                     {
+                        ErrorLines.Add(Count);
+                        StreamWriter ErrorDetails = new StreamWriter(String.Format(@"{0}\AnalyzeClaimAuditErrorDetails.txt", CustomAlgorithmLogPath), append: true);
+                        ErrorDetails.WriteLine(Record);
+                        ErrorDetails.Close();
                         Console.WriteLine(Fields.Count);
                     }
                     Count++;
@@ -43,6 +51,12 @@ namespace JARVIS5
                 Console.WriteLine("----------------------------------------------------------------------------");
                 Console.WriteLine("Claim Audit Analysis End. Time Elapsed: {0} Records: {1}", (StartTime - EndTime).Milliseconds, Count);
                 Console.WriteLine("----------------------------------------------------------------------------");
+                StreamWriter ErrorLog = new StreamWriter(String.Format(@"{0}\AnalyzeClaimAuditErrors.txt", CustomAlgorithmLogPath), append: true);
+                foreach(int Error in ErrorLines)
+                {
+                    ErrorLog.WriteLine(Error);
+                    ErrorLog.Close();
+                }
             }
             catch(Exception e)
             {
