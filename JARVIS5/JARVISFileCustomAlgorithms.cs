@@ -15,10 +15,15 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
+                Console.WriteLine("----------------------------------------------------------------------------");
+                Console.WriteLine("Claim Audit Analysis Start");
+                Console.WriteLine("----------------------------------------------------------------------------");
+                DateTime StartTime = DateTime.Now;
                 FileStream TargetFile = File.Open(this.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 BufferedStream TargetFileBuffered = new BufferedStream(TargetFile);
                 StreamReader TargetFileBufferedReader = new StreamReader(TargetFileBuffered);
                 string Record;
+                int Count = 0;
                 while ((Record = TargetFileBufferedReader.ReadLine()) != null)
                 {
                     List<string> Fields = Record.Split('^').ToList();
@@ -32,8 +37,12 @@ namespace JARVIS5
                     {
                         Console.WriteLine(Fields.Count);
                     }
-                    
+                    Count++;
                 }
+                DateTime EndTime = DateTime.Now;
+                Console.WriteLine("----------------------------------------------------------------------------");
+                Console.WriteLine("Claim Audit Analysis End. Time Elapsed: {0} Records: {1}", (StartTime - EndTime).Milliseconds, Count);
+                Console.WriteLine("----------------------------------------------------------------------------");
             }
             catch(Exception e)
             {

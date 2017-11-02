@@ -68,7 +68,7 @@ namespace JARVIS5
                             }
                             else
                             {
-                                Console.WriteLine("{0} {1} is not a valid command", primaryCommand, secondaryCommand);
+                                Console.WriteLine("{0} {1} is not a recognized command", primaryCommand, secondaryCommand);
                             }
                         }
                         else if (primaryCommand == "findtable")
@@ -90,13 +90,27 @@ namespace JARVIS5
                         }
                         else if (primaryCommand == "read")
                         {
-                            string filePath = userInput.Replace("read", "").Trim();
-                            JARVISFile targetFile = new JARVISFile(filePath);
-                            StatusObject SO_ReadFile = targetFile.AnalyzeClaimAudit();
-                            if(SO_ReadFile.Status == StatusCode.FAILURE)
+                            string secondaryCommand = commandParameters.ElementAtOrDefault(1);
+                            string filePath = userInput.Replace("read", "").Replace(secondaryCommand, "").Trim();
+                            if(secondaryCommand == "csvfile")
                             {
-                                Console.WriteLine(SO_ReadFile.ErrorStackTrace);
+                                JARVISFile targetFile = new JARVISFile(filePath);
+                                StatusObject SO_ReadFile = targetFile.ReadCSV();
+                                if (SO_ReadFile.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_ReadFile.ErrorStackTrace);
+                                }
                             }
+                            else if (secondaryCommand == "textfile")
+                            {
+                                JARVISFile targetFile = new JARVISFile(filePath);
+                                StatusObject SO_ReadFile = targetFile.AnalyzeClaimAudit();
+                                if (SO_ReadFile.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_ReadFile.ErrorStackTrace);
+                                }
+                            }
+                            
                         }
                         else
                         {

@@ -181,6 +181,28 @@ namespace JARVIS5
             }
             return SO;
         }
+        public StatusObject GetColumns(string TableName)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                SqlConnection NewConnection = GetSQLConnection();
+                SqlCommand ColumnQuery = new SqlCommand(
+                    String.Format("select * from information_schema.columns where table_name='{0}'", TableName), 
+                    NewConnection);
+                NewConnection.Open();
+                SqlDataReader ColumnReader = ColumnQuery.ExecuteReader();
+                while (ColumnReader.Read())
+                {
+
+                }
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO;
+        }
         public StatusObject GetIndexedSelectQueries()
         {
             StatusObject SO = new StatusObject();

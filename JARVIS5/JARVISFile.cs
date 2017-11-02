@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.FileIO;
+
 namespace JARVIS5
 {
     public partial class JARVISFile
@@ -26,6 +29,25 @@ namespace JARVIS5
                 while ((line = TargetFileBufferedReader.ReadLine()) != null)
                 {
                     Console.WriteLine(line);
+                }
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "JARVISFILEREAD_FAILURE", e.Message, e.ToString());
+            }
+            return SO;
+        }
+        public StatusObject ReadCSV()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                TextFieldParser CSVParser = new TextFieldParser(FilePath);
+                CSVParser.TextFieldType = FieldType.Delimited;
+                CSVParser.SetDelimiters(",");
+                while (!CSVParser.EndOfData)
+                {
+                    Console.WriteLine(CSVParser.ReadFields().Length);
                 }
             }
             catch(Exception e)
