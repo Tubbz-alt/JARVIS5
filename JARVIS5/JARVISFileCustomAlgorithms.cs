@@ -44,6 +44,14 @@ namespace JARVIS5
         public StatusObject AnalyzeRequestAudit()
         {
             StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "JARVISFILECUSTOMALGO_ANALYZEREQUESTAUDIT_FAILURE", e.Message, e.ToString());
+            }
             return SO;
         }
     }

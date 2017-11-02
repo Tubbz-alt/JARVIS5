@@ -11,10 +11,15 @@ namespace JARVIS5
 {
     public partial class JARVISDataSource
     {
+        [JsonProperty("Server")]
         public string Server { get; set; }
+        [JsonProperty("Database")]
         public string Database { get; set; }
+        [JsonProperty("UserID")]
         public string UserID { get; set; }
+        [JsonProperty("Password")]
         public string Password { get; set; }
+        [JsonProperty("AuthType")]
         public string AuthType { private set; get; }
         private string DataSourceSavePath = @"C:\JARVIS5\UserDefinedDataSources";
         private string TableSavePath = @"C:\JARVIS5\UserDefinedDataSources\Tables";
@@ -29,9 +34,28 @@ namespace JARVIS5
         {
             this.Server = Server;
             this.Database = Database;
-            this.UserID = UserID;
-            this.Password = Password;
-            this.AuthType = "sqlauth";
+            if (UserID == null || UserID.Length == 0 || Password == null || Password.Length == 0)
+            {
+                this.AuthType = "winauth";
+            }
+            else
+            {
+                this.UserID = UserID;
+                this.Password = Password;
+                this.AuthType = "sqlauth";
+            }
+        }
+        public JARVISDataSource(string ConnectionString)
+        {
+            List<string> ConnectionStringParameters = ConnectionString.Split(';').Select(x => x.Trim()).ToList();
+            if(ConnectionStringParameters.Count == 3)
+            {
+
+            }
+            else if (ConnectionStringParameters.Count == 5)
+            {
+
+            }
         }
         public string GetConnectionString()
         {
@@ -57,6 +81,19 @@ namespace JARVIS5
                 ConnectionString = null;
             }
             return ConnectionString;
+        }
+        public string GetJSONString()
+        {
+            string JSONString = "";
+            try
+            {
+                JSONString = JsonConvert.SerializeObject(this);
+            }
+            catch(Exception e)
+            {
+                JSONString = null;
+            }
+            return JSONString;
         }
         public SqlConnection GetSQLConnection()
         {
@@ -141,6 +178,7 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
+                
 
             }
             catch(Exception e)
@@ -149,7 +187,7 @@ namespace JARVIS5
             }
             return SO;
         }
-        public StatusObject SearchTables()
+        public StatusObject SearchTablesForValue()
         {
             StatusObject SO = new StatusObject();
             try
@@ -161,6 +199,28 @@ namespace JARVIS5
 
             }
             return SO;
+        }
+        public StatusObject SearchTablesByColumnName(string TableName)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                SqlConnection NewConnection = GetSQLConnection();
+                SqlCommand TableSearchCommand = new SqlCommand(
+                    String.Format("select TABLE_NAME, COLUMN_NAME from information_schema.columns where COLUMN_NAME like '{0}'", TableName),
+                    NewConnection);
+                NewConnection.Open();
+                SqlDataReader TableSearchCommandReader = TableSearchCommand.ExecuteReader();
+                while (TableSearchCommandReader.Read())
+                {
+                    Console.WriteLine("{0} {1}", TableSearchCommandReader[0], TableSearchCommandReader[1]);
+                }
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO = new StatusObject();
         }
         public StatusObject SearchStoredProcedures()
         {
@@ -172,7 +232,7 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
-
+                
             }
             catch(Exception e)
             {

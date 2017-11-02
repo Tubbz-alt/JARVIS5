@@ -34,5 +34,33 @@ namespace JARVIS5
             }
             return SO;
         }
+        public StatusObject Write()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+
+            }
+            return SO;
+        }
+        public StatusObject Overwrite(string Data)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                StreamWriter Target = new StreamWriter(this.FilePath);
+                Target.WriteLine(Data);
+                Target.Close();
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "JARVISFILE_OVERWRITE_FAILURE", e.Message, e.ToString());
+            }
+            return SO;
+        }
     }
 }

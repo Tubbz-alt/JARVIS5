@@ -13,6 +13,8 @@ namespace JARVIS5
             bool programRunning = true;
             string userInput = "";
             /*Execution of all StartUp Files*/
+            
+            JARVISStartup.ConfigureJARVISDataSource();
 
             /*Execution of batch files first*/
             if(args.Length > 0)
@@ -48,11 +50,39 @@ namespace JARVIS5
                         else if (primaryCommand == "datasource")
                         {
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
-                            if(secondaryCommand == "exportssp")
+                            string server = commandParameters.ElementAtOrDefault(2);
+                            string database = commandParameters.ElementAtOrDefault(3);
+                            string userID = commandParameters.ElementAtOrDefault(4);
+                            string password = commandParameters.ElementAtOrDefault(5);
+                            JARVISDataSource newDataSource = new JARVISDataSource(server, database, userID, password);
+                            if (secondaryCommand == "exportssp")
                             {
-                                JARVISDataSource newDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
                                 newDataSource.GetSQLConnection();
                                 newDataSource.ExportStoredProcedures();
+                            }
+                            else if (secondaryCommand == "add")
+                            {
+                                newDataSource.GetSQLConnection();
+                                newDataSource.SaveToTextFile();
+                            }
+                            else
+                            {
+                                Console.WriteLine("{0} {1} is not a valid command", primaryCommand, secondaryCommand);
+                            }
+                        }
+                        else if (primaryCommand == "findtable")
+                        {
+                            string secondaryCommand = commandParameters.ElementAtOrDefault(1);
+                            string target = commandParameters.ElementAtOrDefault(2);
+                            if(secondaryCommand == "columnname")
+                            {
+                                JARVISDataSource TargetDataSource = new JARVISDataSource("sql2008kl", "claims_dev", "sa", "password");
+                                TargetDataSource.SearchTablesByColumnName(target);
+
+                            }
+                            else if (secondaryCommand == "tablename")
+                            {
+
                             }
                         }
                         else if (primaryCommand == "read")
