@@ -31,19 +31,15 @@ namespace JARVIS5
                 List<string> ErrorLineDetails = new List<string>();
                 while ((Record = TargetFileBufferedReader.ReadLine()) != null)
                 {
-                    List<string> Fields = Record.Split('^').ToList();
-                    if(Fields.Count != 11)
+                    List<string> Fields = Record.Split('^').Select(x => x.Replace("'", "''")).Select(x => x = String.Format("'{0}'", x.Trim())).ToList();
+                    string InsertQuery = String.Format("insert into EtiqaClaimAudit22821 values ({0})", String.Join(",", Fields));
+                    Console.WriteLine(InsertQuery);
+                    JARVISDataSource Storage = new JARVISDataSource("sql2008kl", "shawn_db", "sa", "password");
+                    StatusObject ExecuteInsertQuery = Storage.ExecuteInsertQuery(InsertQuery);
+                    if(ExecuteInsertQuery.Status == StatusCode.FAILURE)
                     {
-                        Console.WriteLine(Record);
-                        Thread.Sleep(3000);
-                    }
-                    else
-                    {
-                        ErrorLines.Add(Count);
-                        StreamWriter ErrorDetails = new StreamWriter(String.Format(@"{0}\AnalyzeClaimAuditErrorDetails.txt", CustomAlgorithmLogPath), append: true);
-                        ErrorDetails.WriteLine(Record);
-                        ErrorDetails.Close();
-                        Console.WriteLine(Fields.Count);
+                        Thread.Sleep(1000);
+                        Console.WriteLine(ExecuteInsertQuery.ErrorStackTrace);
                     }
                     Count++;
                 }

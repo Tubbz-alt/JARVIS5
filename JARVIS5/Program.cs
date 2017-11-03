@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JARVIS5
@@ -122,6 +123,16 @@ namespace JARVIS5
                                 }
                             }
                             
+                        }
+                        else if (primaryCommand == "web")
+                        {
+                            string secondaryCommand = commandParameters.ElementAtOrDefault(1);
+                            Console.WriteLine(secondaryCommand);
+                            StatusObject SO_GetRequest = JARVISWeb.HttpGet(secondaryCommand);
+                            if(SO_GetRequest.Status == StatusCode.FAILURE)
+                            {
+                                Console.WriteLine(SO_GetRequest.ErrorStackTrace);
+                            }
                         }
                         else
                         {

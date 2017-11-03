@@ -70,13 +70,15 @@ namespace JARVIS5
                     Console.WriteLine("JARVIS5 Help");
                     Console.WriteLine("------------------------------------------------------");
                     MethodInfo[] JARVISMethods = JARVISType.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).Where(m => !m.IsSpecialName).ToArray();
-                    foreach(MethodInfo JARVISMethod in JARVISMethods)
+                    foreach (MethodInfo JARVISMethod in JARVISMethods)
                     {
-                        if(!(
-                            JARVISMethod.Name == "ToString" || 
-                            JARVISMethod.Name == "Equals" || 
-                            JARVISMethod.Name == "GetHashCode" || 
-                            JARVISMethod.Name == "GetType"
+                        if (!(
+                            JARVISMethod.Name == "ToString" ||
+                            JARVISMethod.Name == "Equals" ||
+                            JARVISMethod.Name == "GetHashCode" ||
+                            JARVISMethod.Name == "GetType" ||
+                            JARVISMethod.Name == "Finalize" ||
+                            JARVISMethod.Name == "MemberwiseClone"
                             ))
                         {
                             Console.WriteLine("{0}", JARVISMethod.Name);

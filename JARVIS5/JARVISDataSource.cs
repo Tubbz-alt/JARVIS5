@@ -303,5 +303,22 @@ namespace JARVIS5
             }
             return SO;
         }
+        public StatusObject ExecuteInsertQuery(string Query)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                SqlConnection DataSourceConnection = GetSQLConnection();
+                SqlCommand CommandToExecute = new SqlCommand(Query, DataSourceConnection);
+                DataSourceConnection.Open();
+                CommandToExecute.ExecuteNonQuery();
+                DataSourceConnection.Close();
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "DataSource_ExecuteInsertQuery_FAILURE", e.Message, e.ToString());
+            }
+            return SO;
+        }
     }
 }
