@@ -30,6 +30,33 @@ namespace JARVIS5
             }
             return SO;
         }
+        public static StatusObject Help()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                Assembly JARVISAssembly = Assembly.GetExecutingAssembly();
+                Type[] JARVISTypes = JARVISAssembly.GetTypes();
+                Console.WriteLine("------------------------------------------------------");
+                Console.WriteLine("Available Commands");
+                Console.WriteLine("------------------------------------------------------");
+                foreach (Type JARVISType in JARVISTypes)
+                {
+                    if (JARVISType.Name.Contains("JARVIS"))
+                    {
+                        Console.WriteLine(JARVISType.Name);
+                    }
+                }
+                Console.WriteLine("------------------------------------------------------");
+                Console.WriteLine("Available Commands");
+                Console.WriteLine("------------------------------------------------------");
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO;
+        }
         public static StatusObject Help (string TypeName)
         {
             StatusObject SO = new StatusObject();
