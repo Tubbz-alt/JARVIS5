@@ -13,10 +13,11 @@ namespace JARVIS5
         {
             bool programRunning = true;
             string userInput = "";
+            StatusObject SO_PrimaryDatabaseSetup = new StatusObject();
             JARVISDataSource primaryDataSource;
             Dictionary<string, JARVISDataSource> userDefinedDataSources = new Dictionary<string, JARVISDataSource>();
             /*Execution of all StartUp Files*/
-            JARVISConfig.StartUpDiagnostics();
+            SO_PrimaryDatabaseSetup = JARVISConfig.ConfigureJARVISDatabase();
 
             /*Execution of batch files first*/
             if(args.Length > 0)
