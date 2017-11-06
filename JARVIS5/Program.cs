@@ -135,13 +135,12 @@ namespace JARVIS5
                             else if (secondaryCommand == "textfile")
                             {
                                 JARVISFile targetFile = new JARVISFile(filePath);
-                                StatusObject SO_ReadFile = targetFile.AnalyzeClaimAudit();
+                                StatusObject SO_ReadFile = targetFile.AnalyzeRequestAudit(activeDataSource);
                                 if (SO_ReadFile.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(SO_ReadFile.ErrorStackTrace);
                                 }
                             }
-                            
                         }
                         else if (primaryCommand == "web")
                         {
@@ -155,7 +154,19 @@ namespace JARVIS5
                         }
                         else if(primaryCommand == "thread")
                         {
-                            JARVISRuntime.AddThread();
+                            
+                        }
+                        else if(primaryCommand == "wordlist")
+                        {
+                            for(int i = 0; i < 9; i++)
+                            {
+                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.BuildStringPermutationTable(i.ToString(), activeDataSource);
+                                if(DictionaryBuilder.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
+                                    continue;
+                                }
+                            }
                         }
                         else
                         {

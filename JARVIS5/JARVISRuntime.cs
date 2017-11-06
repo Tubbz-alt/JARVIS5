@@ -11,6 +11,7 @@ namespace JARVIS5
 {
     public static class JARVISRuntime
     {
+        public static Dictionary<string, Thread> ThreadDictionary { get; set; }
         public static StatusObject GetTypes()
         {
             StatusObject SO = new StatusObject();
@@ -123,19 +124,30 @@ namespace JARVIS5
             }
             return SO;
         }
-        public static StatusObject AddThread()
+        public static StatusObject AddThread(string MethodName)
         {
             StatusObject SO = new StatusObject();
             try
             {
-                Thread new_thread = new Thread(new ThreadStart(Console.WriteLine));
-                new_thread.Start("hello");
+                
+                
             }
             catch(Exception e)
             {
 
             }
             return SO;
+        }
+        public static void ExecuteThreadMethod(string MethodName)
+        {
+            try
+            {
+
+            }
+            catch(Exception e)
+            {
+                
+            }
         }
     }
 }

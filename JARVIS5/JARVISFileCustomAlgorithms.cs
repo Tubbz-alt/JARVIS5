@@ -62,14 +62,30 @@ namespace JARVIS5
             }
             return SO;
         }
-        public StatusObject AnalyzeRequestAudit(string FileName)
+        public StatusObject AnalyzeRequestAudit(JARVISDataSource ActiveDataSource)
         {
             StatusObject SO = new StatusObject();
             try
             {
-                FileStream TargetFile = File.Open(String.Format(@"{0}"), FileMode.Open, FileAccess.Read, FileShare.Read);
+                Directory.CreateDirectory(CustomAlgorithmInputPath);
+                Directory.CreateDirectory(CustomAlgorithmOutputPath);
+                FileStream TargetFile = File.Open(this.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 BufferedStream TargetFileBuffered = new BufferedStream(TargetFile);
                 StreamReader TargetFileBufferedReader = new StreamReader(TargetFileBuffered);
+                string Record;
+                while((Record = TargetFileBufferedReader.ReadLine())!= null)
+                {
+                    List<string> RecordParameters = Record.Split('\t').ToList();
+                    
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(0));
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(1));
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(2));
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(3));
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(4));
+                    Console.WriteLine(RecordParameters.ElementAtOrDefault(5));
+                    //Console.WriteLine(RecordParameters.ElementAtOrDefault(6));
+                    Thread.Sleep(3000);
+                }
             }
             catch(Exception e)
             {
