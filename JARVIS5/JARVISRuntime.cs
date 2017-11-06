@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.FileIO;
-
+using System.Threading;
 namespace JARVIS5
 {
     public static class JARVISRuntime
@@ -116,6 +116,20 @@ namespace JARVIS5
             try
             {
 
+            }
+            catch(Exception e)
+            {
+
+            }
+            return SO;
+        }
+        public static StatusObject AddThread()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                Thread new_thread = new Thread(new ThreadStart(Console.WriteLine));
+                new_thread.Start("hello");
             }
             catch(Exception e)
             {

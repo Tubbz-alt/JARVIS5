@@ -15,6 +15,7 @@ namespace JARVIS5
             string userInput = "";
             StatusObject SO_PrimaryDatabaseSetup = new StatusObject();
             JARVISDataSource primaryDataSource;
+            JARVISDataSource activeDataSource = null;
             Dictionary<string, JARVISDataSource> userDefinedDataSources = new Dictionary<string, JARVISDataSource>();
             /*Execution of all StartUp Files*/
             SO_PrimaryDatabaseSetup = JARVISConfig.ConfigureJARVISDatabase();
@@ -79,6 +80,23 @@ namespace JARVIS5
                                 newDataSource.GetSQLConnection();
                                 newDataSource.SaveToTextFile();
                             }
+                            else if (secondaryCommand == "setactive")
+                            {
+                                StatusObject SO_SetActiveDatasource = JARVISConfig.SetActiveDataSource();
+                                if (SO_SetActiveDatasource.Status != StatusCode.FAILURE)
+                                {
+                                    activeDataSource = SO_SetActiveDatasource.UDDynamic;
+                                }
+                                else
+                                {
+                                    Console.WriteLine(SO_SetActiveDatasource.ErrorStackTrace);
+                                    activeDataSource = null;
+                                }
+                            }
+                            else if (secondaryCommand == "clearactive")
+                            {
+                                activeDataSource = null;
+                            }
                             else
                             {
                                 Console.WriteLine("{0} {1} is not a recognized command", primaryCommand, secondaryCommand);
@@ -134,6 +152,10 @@ namespace JARVIS5
                             {
                                 Console.WriteLine(SO_GetRequest.ErrorStackTrace);
                             }
+                        }
+                        else if(primaryCommand == "thread")
+                        {
+                            JARVISRuntime.AddThread();
                         }
                         else
                         {

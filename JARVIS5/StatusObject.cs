@@ -18,6 +18,7 @@ namespace JARVIS5
         public string ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
         public string ErrorStackTrace { get; set; }
+        public dynamic UDDynamic { get; set; }
         private string StatusObjectLogFilePath = @"C:\JARVIS5\Logs\StatusObjectLogs";
         public StatusObject()
         {
@@ -29,6 +30,7 @@ namespace JARVIS5
             this.ErrorCode = ErrorCode;
             this.ErrorMessage = ErrorMessage;
             this.ErrorStackTrace = ErrorStackTrace;
+            this.UDDynamic = null;
         }
         public bool LogError()
         {

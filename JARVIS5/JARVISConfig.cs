@@ -76,5 +76,38 @@ namespace JARVIS5
             }
             return SO;
         }
+        public static StatusObject SetActiveDataSource()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                string Server;
+                string Database;
+                string UserID;
+                string Password;
+                Console.WriteLine("----------------------------------------------------------");
+                Console.WriteLine("START: Set Active DataSource");
+                Console.WriteLine("----------------------------------------------------------");
+                Console.Write("Server: ");
+                Server = Console.ReadLine();
+                Console.Write("Database: ");
+                Database = Console.ReadLine();
+                Console.Write("UserID  (Press enter to skip if using Windows Authentication): ");
+                UserID = Console.ReadLine();
+                Console.Write("Password (Press enter to skip if using Windows Authentication): ");
+                Password = Console.ReadLine();
+                JARVISDataSource PrimaryDataSource = new JARVISDataSource(Server, Database, UserID, Password);
+                PrimaryDataSource.GetSQLConnection();
+                Console.WriteLine("----------------------------------------------------------");
+                Console.WriteLine("END:  Set Active DataSource");
+                Console.WriteLine("----------------------------------------------------------");
+                SO.UDDynamic = PrimaryDataSource;
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "", e.Message, e.ToString());
+            }
+            return SO;
+        }
     }
 }

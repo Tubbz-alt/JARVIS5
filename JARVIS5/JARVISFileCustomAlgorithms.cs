@@ -11,6 +11,8 @@ namespace JARVIS5
     public partial class JARVISFile
     {
         private string CustomAlgorithmLogPath = @"C:\JARVIS5\FileCustomAlgorithmLogs";
+        private string CustomAlgorithmInputPath = @"C:\JARVIS5\FileCustomAlgorithmInputs";
+        private string CustomAlgorithmOutputPath = @"C:\JARVIS5\FileCustomAlgorithmOutput";
         public StatusObject AnalyzeClaimAudit()
         {
             StatusObject SO = new StatusObject();
@@ -60,12 +62,14 @@ namespace JARVIS5
             }
             return SO;
         }
-        public StatusObject AnalyzeRequestAudit()
+        public StatusObject AnalyzeRequestAudit(string FileName)
         {
             StatusObject SO = new StatusObject();
             try
             {
-
+                FileStream TargetFile = File.Open(String.Format(@"{0}"), FileMode.Open, FileAccess.Read, FileShare.Read);
+                BufferedStream TargetFileBuffered = new BufferedStream(TargetFile);
+                StreamReader TargetFileBufferedReader = new StreamReader(TargetFileBuffered);
             }
             catch(Exception e)
             {
