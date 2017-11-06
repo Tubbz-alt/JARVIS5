@@ -308,7 +308,7 @@ namespace JARVIS5
             }
             return SO;
         }
-        public StatusObject ExecuteInsertQuery(string Query)
+        public StatusObject ExecuteNonReaderQuery(string Query)
         {
             StatusObject SO = new StatusObject();
             try

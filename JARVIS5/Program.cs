@@ -158,15 +158,16 @@ namespace JARVIS5
                         }
                         else if(primaryCommand == "wordlist")
                         {
-                            for(int i = 0; i < 9; i++)
+                            for(int i = 1; i < 11; i++)
                             {
-                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.BuildStringPermutationTable(i.ToString(), activeDataSource);
-                                if(DictionaryBuilder.Status == StatusCode.FAILURE)
+                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.BuildStringPermutationTable(i.ToString(), ' ', activeDataSource);
+                                if (DictionaryBuilder.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
                                     continue;
                                 }
                             }
+                            
                         }
                         else
                         {

@@ -37,7 +37,7 @@ namespace JARVIS5
                     string InsertQuery = String.Format("insert into EtiqaClaimAudit22821 values ({0})", String.Join(",", Fields));
                     Console.WriteLine(InsertQuery);
                     JARVISDataSource Storage = new JARVISDataSource("sql2008kl", "shawn_db", "sa", "password");
-                    StatusObject ExecuteInsertQuery = Storage.ExecuteInsertQuery(InsertQuery);
+                    StatusObject ExecuteInsertQuery = Storage.ExecuteNonReaderQuery(InsertQuery);
                     if(ExecuteInsertQuery.Status == StatusCode.FAILURE)
                     {
                         Thread.Sleep(1000);
