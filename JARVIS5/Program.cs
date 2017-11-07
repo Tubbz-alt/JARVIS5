@@ -13,6 +13,7 @@ namespace JARVIS5
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(System.Reflection.Assembly.GetEntryAssembly().Location);
             bool programRunning = true;
             string userInput = "";
             StatusObject SO_PrimaryDatabaseSetup = new StatusObject();
@@ -31,6 +32,7 @@ namespace JARVIS5
                 Console.WriteLine("--------------------------------------------------------------------");
                 userInput = string.Join(" ", args);
                 Console.WriteLine(userInput);
+                
             }
             else
             {
@@ -156,7 +158,7 @@ namespace JARVIS5
                             string wordLength = commandParameters.ElementAtOrDefault(3);
                             if(secondaryCommand == "buildtables")
                             {
-                                StatusObject SO_BuildTable = JARVISRandomAlgorithms.BuildStringPermutationTable(activeDataSource);
+                                StatusObject SO_BuildTable = JARVISCryptography.BuildStringPermutationTable(activeDataSource);
                                 if (SO_BuildTable.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(SO_BuildTable.ErrorStackTrace);
@@ -164,10 +166,19 @@ namespace JARVIS5
                             } 
                             else if (secondaryCommand == "populatetables")
                             {
-                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.PopulateStringPermutationTable(wordLength.ToString(), firstLetter.ToCharArray()[0], activeDataSource);
+                                StatusObject DictionaryBuilder = JARVISCryptography.PopulateStringPermutationTable(wordLength.ToString(), firstLetter.ToCharArray()[0], activeDataSource);
                                 if (DictionaryBuilder.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
+                                }
+                            }
+                            else if (secondaryCommand == "buildbatchfiles")
+                            {
+                                wordLength = commandParameters.ElementAtOrDefault(2);
+                                StatusObject SO_BuildBatchFiles = JARVISCryptography.CreateStringPermutationBatchFiles(wordLength);
+                                if (SO_BuildBatchFiles.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_BuildBatchFiles.ErrorStackTrace);
                                 }
                             }
                         }
@@ -181,6 +192,7 @@ namespace JARVIS5
                             Console.WriteLine("--------------------------------------------------------------------");
                             Console.WriteLine("End Batch Execution");
                             Console.WriteLine("--------------------------------------------------------------------");
+                            Console.ReadKey();
                             userInput = "exit";
                         }
                         else
@@ -201,6 +213,7 @@ namespace JARVIS5
                     Console.WriteLine(ex.ToString());
                     programRunning = true;
                     userInput = "";
+                    Console.ReadKey();
                 }
             }
         }

@@ -67,8 +67,9 @@
     <Compile Include="JARVISFileCustomAlgorithms.cs" />
     <Compile Include="JARVISLogging.cs" />
     <Compile Include="JARVISConfig.cs" />
-    <Compile Include="JARVISRandomAlgorithms.cs" />
+    <Compile Include="JARVISCryptography.cs" />
     <Compile Include="JARVISRuntime.cs" />
+    <Compile Include="JARVISUniversalDefinitions.cs" />
     <Compile Include="JARVISWeb.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

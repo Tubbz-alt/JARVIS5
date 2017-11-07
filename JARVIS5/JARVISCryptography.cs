@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace JARVIS5
 {
-    public static class JARVISRandomAlgorithms
+    public static class JARVISCryptography
     {
         public static string RandomAlgorithmOutputPath = @"C:\JARVIS5\RandomAlgorithmOutput";
+        private static string RainbowTableBatchFilePath = @"C:\JARVIS5\Cryptography\RainbowTables\BatchFiles";
+        
         public static StatusObject BuildUUIDTable()
         {
             StatusObject SO = new StatusObject();
@@ -195,9 +197,61 @@ namespace JARVIS5
             }
             return SO;
         }
-        public static StatusObject CreateStringPermutationBatchFile(string MaxWordLength)
+        public static StatusObject CreateStringPermutationBatchFiles(string MaxWordLength)
         {
             StatusObject SO = new StatusObject();
+            try
+            {
+                string TargetString = "";
+                for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
+                {
+                    TargetString += (char)smallAlphabet;
+                }
+                for (int Numeric = 48; Numeric <= 57; Numeric++)
+                {
+                    TargetString += (char)Numeric;
+                }
+                for (int Symbol = 32; Symbol <= 47; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 58; Symbol <= 64; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 91; Symbol <= 96; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 123; Symbol <= 126; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                Directory.CreateDirectory(RainbowTableBatchFilePath);
+                foreach(char TargetCharacter in TargetString)
+                {
+                    for(int i = 1; i <= Convert.ToInt32(MaxWordLength); i++)
+                    {
+                        //RAINBOW_97_10
+                        Console.WriteLine("RAINBOW_{0}_{1}.bat", (int)TargetCharacter, i);
+                        
+                        StreamWriter BatchFile = new StreamWriter(String.Format(@"{0}\RAINBOW_{1}_{2}.bat", RainbowTableBatchFilePath, (int)TargetCharacter, i));
+                        string batchInstruction =
+                            String.Format(
+                                "{2} wordlist populatetables {0} {1}",
+                                JARVISUniversalDefinitions.BatchFileEscapeCharacters.ContainsKey(TargetCharacter) ?
+                                    JARVISUniversalDefinitions.BatchFileEscapeCharacters[TargetCharacter] : TargetCharacter.ToString(),
+                                i,
+                                System.Reflection.Assembly.GetEntryAssembly().Location);
+                        BatchFile.WriteLine(batchInstruction);
+                        BatchFile.Close();
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "CreateStringPermutationBatchFiles_ERROR", e.Message, e.ToString());
+            }
             return SO;
         }
         public static void DoSomething()
