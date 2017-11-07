@@ -10,6 +10,7 @@ namespace JARVIS5
 {
     public static class JARVISConfig
     {
+        private static string RootPath = @"C:\JARVIS5";
         private static string StartUpFolderPath = @"C:\JARVIS5\Config";
         public static StatusObject StartUpDiagnostics()
         {
@@ -102,6 +103,21 @@ namespace JARVIS5
                 Console.WriteLine("END:  Set Active DataSource");
                 Console.WriteLine("----------------------------------------------------------");
                 SO.UDDynamic = PrimaryDataSource;
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "", e.Message, e.ToString());
+            }
+            return SO;
+        }
+        public static StatusObject CopyExecutable()
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                string src = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                string dest = @"C:\JARVIS5\" + System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
+                System.IO.File.Copy(src, dest);
             }
             catch(Exception e)
             {

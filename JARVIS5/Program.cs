@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.IO;
+using System.Diagnostics;
+using System.Reflection;
 namespace JARVIS5
 {
     class Program
@@ -19,7 +21,7 @@ namespace JARVIS5
             Dictionary<string, JARVISDataSource> userDefinedDataSources = new Dictionary<string, JARVISDataSource>();
             /*Execution of all StartUp Files*/
             SO_PrimaryDatabaseSetup = JARVISConfig.ConfigureJARVISDatabase();
-
+            JARVISConfig.CopyExecutable();
             /*Execution of batch files first*/
             if(args.Length > 0)
             {
@@ -149,17 +151,24 @@ namespace JARVIS5
                         }
                         else if (primaryCommand == "wordlist")
                         {
-                            string firstLetter = commandParameters.ElementAtOrDefault(1);
-                            string wordLength = commandParameters.ElementAtOrDefault(2);
-                            StatusObject SO_BuildTable = JARVISRandomAlgorithms.BuildStringPermutationTable(activeDataSource);
-                            if (SO_BuildTable.Status == StatusCode.FAILURE)
+                            string secondaryCommand = commandParameters.ElementAtOrDefault(1);
+                            string firstLetter = commandParameters.ElementAtOrDefault(2);
+                            string wordLength = commandParameters.ElementAtOrDefault(3);
+                            if(secondaryCommand == "buildtables")
                             {
-                                Console.WriteLine(SO_BuildTable.ErrorStackTrace);
-                            }
-                            StatusObject DictionaryBuilder = JARVISRandomAlgorithms.PopulateStringPermutationTable(wordLength.ToString(), firstLetter.ToCharArray()[0], activeDataSource);
-                            if (DictionaryBuilder.Status == StatusCode.FAILURE)
+                                StatusObject SO_BuildTable = JARVISRandomAlgorithms.BuildStringPermutationTable(activeDataSource);
+                                if (SO_BuildTable.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_BuildTable.ErrorStackTrace);
+                                }
+                            } 
+                            else if (secondaryCommand == "populatetables")
                             {
-                                Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
+                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.PopulateStringPermutationTable(wordLength.ToString(), firstLetter.ToCharArray()[0], activeDataSource);
+                                if (DictionaryBuilder.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
+                                }
                             }
                         }
                         else
