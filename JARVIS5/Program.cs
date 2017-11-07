@@ -54,13 +54,13 @@ namespace JARVIS5
                             if (commandGroup != null)
                             {
                                 JARVISRuntime.Help(commandGroup);
-                                
+
                             }
                             else
                             {
                                 JARVISRuntime.Help();
                             }
-                            
+
                         }
                         else if (primaryCommand == "datasource")
                         {
@@ -82,16 +82,7 @@ namespace JARVIS5
                             }
                             else if (secondaryCommand == "setactive")
                             {
-                                StatusObject SO_SetActiveDatasource = JARVISConfig.SetActiveDataSource();
-                                if (SO_SetActiveDatasource.Status != StatusCode.FAILURE)
-                                {
-                                    activeDataSource = SO_SetActiveDatasource.UDDynamic;
-                                }
-                                else
-                                {
-                                    Console.WriteLine(SO_SetActiveDatasource.ErrorStackTrace);
-                                    activeDataSource = null;
-                                }
+                                activeDataSource = new JARVISDataSource(server, database, userID, password);
                             }
                             else if (secondaryCommand == "clearactive")
                             {
@@ -105,8 +96,8 @@ namespace JARVIS5
                         else if (primaryCommand == "findtable")
                         {
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
-                            
-                            if(secondaryCommand == "columnname")
+
+                            if (secondaryCommand == "columnname")
                             {
                                 string target = userInput.Replace("findtable columnname", "").Trim();
                                 Console.WriteLine(target);
@@ -123,7 +114,7 @@ namespace JARVIS5
                         {
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
                             string filePath = userInput.Replace("read", "").Replace(secondaryCommand, "").Trim();
-                            if(secondaryCommand == "csvfile")
+                            if (secondaryCommand == "csvfile")
                             {
                                 JARVISFile targetFile = new JARVISFile(filePath);
                                 StatusObject SO_ReadFile = targetFile.ReadCSV();
@@ -147,27 +138,29 @@ namespace JARVIS5
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
                             Console.WriteLine(secondaryCommand);
                             StatusObject SO_GetRequest = JARVISWeb.HttpGet(secondaryCommand);
-                            if(SO_GetRequest.Status == StatusCode.FAILURE)
+                            if (SO_GetRequest.Status == StatusCode.FAILURE)
                             {
                                 Console.WriteLine(SO_GetRequest.ErrorStackTrace);
                             }
                         }
-                        else if(primaryCommand == "thread")
+                        else if (primaryCommand == "thread")
                         {
-                            
+
                         }
-                        else if(primaryCommand == "wordlist")
+                        else if (primaryCommand == "wordlist")
                         {
-                            for(int i = 1; i < 11; i++)
+                            string firstLetter = commandParameters.ElementAtOrDefault(1);
+                            string wordLength = commandParameters.ElementAtOrDefault(2);
+                            StatusObject SO_BuildTable = JARVISRandomAlgorithms.BuildStringPermutationTable(activeDataSource);
+                            if (SO_BuildTable.Status == StatusCode.FAILURE)
                             {
-                                StatusObject DictionaryBuilder = JARVISRandomAlgorithms.BuildStringPermutationTable(i.ToString(), ' ', activeDataSource);
-                                if (DictionaryBuilder.Status == StatusCode.FAILURE)
-                                {
-                                    Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
-                                    continue;
-                                }
+                                Console.WriteLine(SO_BuildTable.ErrorStackTrace);
                             }
-                            
+                            StatusObject DictionaryBuilder = JARVISRandomAlgorithms.PopulateStringPermutationTable(wordLength.ToString(), firstLetter.ToCharArray()[0], activeDataSource);
+                            if (DictionaryBuilder.Status == StatusCode.FAILURE)
+                            {
+                                Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
+                            }
                         }
                         else
                         {
