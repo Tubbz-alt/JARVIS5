@@ -236,9 +236,10 @@ namespace JARVIS5
                             (int)item[0]);
                         Console.WriteLine(insertQuery);
                         StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
-                        if (SO_AddRecord.Status == StatusCode.FAILURE)
+                        while (SO_AddRecord.Status == StatusCode.FAILURE)
                         {
                             Console.WriteLine(SO_AddRecord.ErrorMessage);
+                            SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
                         }
                     }
                     else
