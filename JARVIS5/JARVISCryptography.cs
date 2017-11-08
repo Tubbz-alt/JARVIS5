@@ -76,14 +76,14 @@ namespace JARVIS5
                     "TableCreateQuery",
                     @"CREATE TABLE [dbo].[RAINBOW_{0}](
 	                    [ID] [int] IDENTITY(1,1) NOT NULL,
-	                    [Word] [varchar](255) NOT NULL,
+	                    [Word] [varchar](20) NOT NULL,
 	                    [FirstLetter] [varchar](1) NOT NULL,
 	                    [LetterCount] [int] NOT NULL,
-	                    [MD5] [varchar](255) NULL,
-	                    [SHA] [varchar](255) NULL,
-	                    [SHA1] [varchar](255) NULL,
-	                    [SHA2_256] [varchar](255) NULL,
-	                    [SHA2_512] [varchar](255) NULL,
+	                    [MD5] [varchar](32) NULL,
+	                    [SHA] [varchar](40) NULL,
+	                    [SHA1] [varchar](40) NULL,
+	                    [SHA2_256] [varchar](64) NULL,
+	                    [SHA2_512] [varchar](128) NULL,
                      CONSTRAINT [PK_RAINBOW_{0}] PRIMARY KEY CLUSTERED 
                     (
 	                    [ID] ASC
@@ -229,7 +229,7 @@ namespace JARVIS5
                     if(item[0] == FirstCharacter)
                     {
                         string insertQuery = String.Format(
-                            @"insert into RAINBOW_{3} (Word,FirstLetter,LetterCount,MD5) values ('{0}','{1}',{2},convert(varchar(255),hashbytes('MD5','{0}'),2))",
+                            @"insert into RAINBOW_{3} (Word,FirstLetter,LetterCount,MD5) values ('{0}','{1}',{2},convert(varchar(32),hashbytes('MD5','{0}'),2))",
                             item.Replace("'", "''"),
                             item[0] == '\'' ? "''" : item[0].ToString(),
                             item.Length,
