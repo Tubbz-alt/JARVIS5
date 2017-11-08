@@ -229,7 +229,17 @@ namespace JARVIS5
                     if(item[0] == FirstCharacter)
                     {
                         string insertQuery = String.Format(
-                            @"insert into RAINBOW_{3} (Word,FirstLetter,LetterCount,MD5) values ('{0}','{1}',{2},convert(varchar(32),hashbytes('MD5','{0}'),2))",
+                            @"insert into RAINBOW_{3} 
+                            (Word,FirstLetter,LetterCount,MD5,SHA,SHA1,SHA2_256,SHA2_512) 
+                            values (
+                                '{0}',
+                                '{1}',
+                                {2},
+                                convert(varchar(32),hashbytes('MD5','{0}'),2),
+                                convert(varchar(40),hashbytes('SHA','{0}'),2),
+                                convert(varchar(40),hashbytes('SHA1','{0}'),2),
+                                convert(varchar(64),hashbytes('SHA2_256','{0}'),2),
+                                convert(varchar(128),hashbytes('SHA2_512','{0}'),2))",
                             item.Replace("'", "''"),
                             item[0] == '\'' ? "''" : item[0].ToString(),
                             item.Length,
