@@ -234,13 +234,24 @@ namespace JARVIS5
                     {
                         //RAINBOW_97_10
                         Console.WriteLine("RAINBOW_{0}_{1}.bat", (int)TargetCharacter, i);
-                        
+                        string ReplacementCharacter = null;
+                        bool requiresEscape = false;
+                        if(TargetCharacter == ' ')
+                        {
+                            ReplacementCharacter = "space";
+                            requiresEscape = true;
+                        }
+                        else if (JARVISUniversalDefinitions.BatchFileEscapeCharacters.ContainsKey(TargetCharacter))
+                        {
+                            ReplacementCharacter = JARVISUniversalDefinitions.BatchFileEscapeCharacters[TargetCharacter];
+                            requiresEscape = true;
+                        }
+
                         StreamWriter BatchFile = new StreamWriter(String.Format(@"{0}\RAINBOW_{1}_{2}.bat", RainbowTableBatchFilePath, (int)TargetCharacter, i));
                         string batchInstruction =
                             String.Format(
                                 "{2} wordlist populatetables {0} {1}",
-                                JARVISUniversalDefinitions.BatchFileEscapeCharacters.ContainsKey(TargetCharacter) ?
-                                    JARVISUniversalDefinitions.BatchFileEscapeCharacters[TargetCharacter] : TargetCharacter.ToString(),
+                                (requiresEscape) ? ReplacementCharacter : TargetCharacter.ToString(),
                                 i,
                                 System.Reflection.Assembly.GetEntryAssembly().Location);
                         BatchFile.WriteLine(batchInstruction);
