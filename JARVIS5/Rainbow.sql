@@ -111,4 +111,8 @@ insert into RAINBOW_39 values ('''~@','''',3,convert(varchar(255),hashbytes('MD5
 
 select convert(varchar(255),hashbytes('MD5','''~@'),2)
 
-select * from rainbow_32
+select count(*) from rainbow_32
+
+sp_spaceused 'rainbow_32'
+
+select len('9223372036854775808')
