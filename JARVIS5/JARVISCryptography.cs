@@ -71,22 +71,68 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
-                string TableQuery =
-                    @"CREATE TABLE[dbo].[RAINBOW_{0}](" +
-                        "[ID][bigint] IDENTITY(1, 1) NOT NULL," +
-                        "[Word] [varchar] (255) NOT NULL," +
-                        "[FirstLetter] [varchar] (1) NOT NULL," +
-                        "[LetterCount] [int] NOT NULL," +
-                        "[MD5] [varchar] (255) NULL," +
-                        "[SHA] [varchar] (255) NULL," +
-                        "[SHA1] [varchar] (255) NULL," +
-                        "[SHA2_256] [varchar] (255) NULL," +
-                        "[SHA2_512] [varchar] (255) NULL," +
-                     "CONSTRAINT[PK_RAINBOW_{0}] PRIMARY KEY CLUSTERED" +
-                    "(" +
-                       "[ID] ASC" +
-                    ")WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]" +
-                    ") ON[PRIMARY]";
+                Dictionary<string, string> TableCreationQueries = new Dictionary<string, string>();
+                TableCreationQueries.Add(
+                    "TableCreateQuery",
+                    @"CREATE TABLE [dbo].[RAINBOW_{0}](
+	                    [ID] [int] IDENTITY(1,1) NOT NULL,
+	                    [Word] [varchar](255) NOT NULL,
+	                    [FirstLetter] [varchar](1) NOT NULL,
+	                    [LetterCount] [int] NOT NULL,
+	                    [MD5] [varchar](255) NULL,
+	                    [SHA] [varchar](255) NULL,
+	                    [SHA1] [varchar](255) NULL,
+	                    [SHA2_256] [varchar](255) NULL,
+	                    [SHA2_512] [varchar](255) NULL,
+                     CONSTRAINT [PK_RAINBOW_{0}] PRIMARY KEY CLUSTERED 
+                    (
+	                    [ID] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                    ) ON [PRIMARY]");
+                TableCreationQueries.Add(
+                    "IndexFirstLetterQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_FIRSTLETTER_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [FirstLetter] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add(
+                    "IndexLetterCountQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_LETTERCOUNT_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [LetterCount] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add(
+                    "IndexMD5Query",
+                    @"CREATE NONCLUSTERED INDEX [IX_MD5_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [MD5] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add("IndexSHAQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_SHA_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [SHA] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add("IndexSHA1Query",
+                    @"CREATE NONCLUSTERED INDEX [IX_SHA1_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [SHA1] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add("IndexSHA2_256Query",
+                    @"CREATE NONCLUSTERED INDEX [IX_SHA2_256_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [SHA2_256] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add("IndexSHA2_512Query",
+                    @"CREATE NONCLUSTERED INDEX [IX_SHA2_512_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+	                    [SHA2_512] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+                TableCreationQueries.Add("IndexWordQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_WORD_{0}] ON [dbo].[RAINBOW_{0}]
+                    (
+                        [Word] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
+
                 string TargetString = "";
                 for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
                 {
@@ -115,11 +161,15 @@ namespace JARVIS5
                 //Create Tables
                 foreach (char Character in TargetString)
                 {
-                    StatusObject SO_CreateTable = DictionaryStorage.ExecuteNonReaderQuery(String.Format(TableQuery, (int)Character));
-                    Console.WriteLine("Creating Table RAINBOW_{0}", (int)Character);
-                    if (SO_CreateTable.Status == StatusCode.FAILURE)
+                    foreach(KeyValuePair<string,string> Query in TableCreationQueries)
                     {
-                        Console.WriteLine(SO_CreateTable.ErrorMessage);
+                        Console.WriteLine("Creating {0} RAINBOW_{1}", Query.Key.Substring(0, 5), (int)Character);
+                        StatusObject SO_CreateTable = DictionaryStorage.ExecuteNonReaderQuery(String.Format(Query.Value, (int)Character));
+                        if (SO_CreateTable.Status == StatusCode.FAILURE)
+                        {
+                            Console.WriteLine(SO_CreateTable.ErrorMessage);
+                            break;
+                        }
                     }
                 }
             }
@@ -129,7 +179,7 @@ namespace JARVIS5
             }
             return SO;
         }
-        public static StatusObject PopulateStringPermutationTable(string WordLength, char FirstLetter, JARVISDataSource DictionaryStorage)
+        public static StatusObject PopulateStringPermutationTable(string WordLength, string FirstLetter, JARVISDataSource DictionaryStorage)
         {
             StatusObject SO = new StatusObject();
             try
@@ -160,10 +210,11 @@ namespace JARVIS5
                     TargetString += (char)Symbol;
                 }
                 string ReorderedString = "";
-                ReorderedString += FirstLetter;
+                char FirstCharacter = (FirstLetter == "space") ? ' ' : FirstLetter.ToCharArray()[0];
+                ReorderedString += FirstCharacter;
                 foreach (char TargetCharacter in TargetString)
                 {
-                    if(TargetCharacter != FirstLetter)
+                    if(TargetCharacter != FirstCharacter)
                     {
                         ReorderedString += TargetCharacter;
                     }
@@ -175,15 +226,20 @@ namespace JARVIS5
 
                 foreach (var item in q)
                 {
-                    if(item[0] == FirstLetter)
+                    if(item[0] == FirstCharacter)
                     {
-                        string insertQuery = String.Format("insert into RAINBOW_{3} values ('{0}','{1}',{2})", item, item[0], item.Length, (int)item[0]);
-                        Console.WriteLine(item);
-                        /*StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
+                        string insertQuery = String.Format(
+                            @"insert into RAINBOW_{3} (Word,FirstLetter,LetterCount,MD5) values ('{0}','{1}',{2},convert(varchar(255),hashbytes('MD5','{0}'),2))",
+                            item.Replace("'", "''"),
+                            item[0] == '\'' ? "''" : item[0].ToString(),
+                            item.Length,
+                            (int)item[0]);
+                        Console.WriteLine(insertQuery);
+                        StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
                         if (SO_AddRecord.Status == StatusCode.FAILURE)
                         {
                             Console.WriteLine(SO_AddRecord.ErrorMessage);
-                        }*/
+                        }
                     }
                     else
                     {
@@ -197,7 +253,7 @@ namespace JARVIS5
             }
             return SO;
         }
-        public static StatusObject CreateStringPermutationBatchFiles(string MaxWordLength)
+        public static StatusObject CreateStringPermutationBatchFiles(string MaxWordLength, string DataSourceName)
         {
             StatusObject SO = new StatusObject();
             try
@@ -250,10 +306,11 @@ namespace JARVIS5
                         StreamWriter BatchFile = new StreamWriter(String.Format(@"{0}\RAINBOW_{1}_{2}.bat", RainbowTableBatchFilePath, (int)TargetCharacter, i));
                         string batchInstruction =
                             String.Format(
-                                "{2} wordlist populatetables {0} {1}",
-                                (requiresEscape) ? ReplacementCharacter : TargetCharacter.ToString(),
-                                i,
-                                System.Reflection.Assembly.GetEntryAssembly().Location);
+                                    "{0} wordlist populatetables {1} {2} {3}",
+                                    System.Reflection.Assembly.GetEntryAssembly().Location,
+                                    DataSourceName,
+                                    (requiresEscape) ? ReplacementCharacter : TargetCharacter.ToString(),
+                                    i);
                         BatchFile.WriteLine(batchInstruction);
                         BatchFile.Close();
                     }
@@ -262,6 +319,53 @@ namespace JARVIS5
             catch(Exception e)
             {
                 SO = new StatusObject(StatusCode.FAILURE, "CreateStringPermutationBatchFiles_ERROR", e.Message, e.ToString());
+            }
+            return SO;
+        }
+        public static StatusObject ClearTables(JARVISDataSource DictionaryStorage)
+        {
+            StatusObject SO = new StatusObject();
+            try
+            {
+                string TargetString = "";
+                for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
+                {
+                    TargetString += (char)smallAlphabet;
+                }
+                for (int Numeric = 48; Numeric <= 57; Numeric++)
+                {
+                    TargetString += (char)Numeric;
+                }
+                for (int Symbol = 32; Symbol <= 47; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 58; Symbol <= 64; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 91; Symbol <= 96; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                for (int Symbol = 123; Symbol <= 126; Symbol++)
+                {
+                    TargetString += (char)Symbol;
+                }
+                foreach(char TargetCharacter in TargetString)
+                {
+                    string truncateQuery = String.Format("truncate table RAINBOW_{0}", (int)TargetCharacter);
+                    Console.WriteLine(truncateQuery);
+                    StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(truncateQuery);
+                    if (SO_AddRecord.Status == StatusCode.FAILURE)
+                    {
+                        Console.WriteLine(SO_AddRecord.ErrorMessage);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                SO = new StatusObject(StatusCode.FAILURE, "ClearTable_ERROR", e.Message, e.ToString());
             }
             return SO;
         }

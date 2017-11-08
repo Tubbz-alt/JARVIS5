@@ -102,3 +102,13 @@ drop table RAINBOW_61
 drop table RAINBOW_62
 drop table RAINBOW_63
 drop table RAINBOW_64
+
+truncate table rainbow_97
+
+insert into RAINBOW_39 values ('''u'''''',3,convert(varchar(255),hashbytes('MD5',''''u'''),2))
+
+insert into RAINBOW_39 values ('''~@','''',3,convert(varchar(255),hashbytes('MD5','''~@'),2))
+
+select convert(varchar(255),hashbytes('MD5','''~@'),2)
+
+select * from rainbow_32
