@@ -134,6 +134,10 @@ namespace JARVIS5
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
 
                 string TargetString = "";
+                for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
+                {
+                    TargetString += (char)LargeAlphabet;
+                }
                 for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
                 {
                     TargetString += (char)smallAlphabet;
@@ -185,6 +189,10 @@ namespace JARVIS5
             try
             {
                 string TargetString = "";
+                for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
+                {
+                    TargetString += (char)LargeAlphabet;
+                }
                 for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
                 {
                     TargetString += (char)smallAlphabet;
@@ -270,6 +278,10 @@ namespace JARVIS5
             try
             {
                 string TargetString = "";
+                for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
+                {
+                    TargetString += (char)LargeAlphabet;
+                }
                 for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
                 {
                     TargetString += (char)smallAlphabet;
@@ -339,6 +351,10 @@ namespace JARVIS5
             try
             {
                 string TargetString = "";
+                for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
+                {
+                    TargetString += (char)LargeAlphabet;
+                }
                 for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
                 {
                     TargetString += (char)smallAlphabet;
@@ -379,23 +395,6 @@ namespace JARVIS5
                 SO = new StatusObject(StatusCode.FAILURE, "ClearTable_ERROR", e.Message, e.ToString());
             }
             return SO;
-        }
-        public static void DoSomething()
-        {
-            try
-            {
-                Directory.CreateDirectory(RandomAlgorithmOutputPath);
-                StreamWriter TestFile = new StreamWriter(String.Format(@"{0}\DoSomething.txt", RandomAlgorithmOutputPath), append: true);
-                for(int i = 0; i < 1000; i++)
-                {
-                    TestFile.WriteLine(i);
-                }
-                TestFile.Close();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
         }
     }
 }
