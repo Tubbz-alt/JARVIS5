@@ -196,6 +196,10 @@ namespace JARVIS5
                             else if (secondaryCommand == "cleartables")
                             {
                                 StatusObject SO_ClearTables = JARVISCryptography.ClearTables(userDefinedDataSources[targetDataSource]);
+                                if (SO_ClearTables.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_ClearTables.ErrorStackTrace);
+                                }
                             }
                         }
                         else

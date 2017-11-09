@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.Data.SqlClient;
+
 namespace JARVIS5
 {
     public static class JARVISCryptography
@@ -346,45 +348,21 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
-                string TargetString = "";
-                for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
+                string TruncateTableQuery = "select 'drop table '+TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_NAME like 'RAINBOW%'";
+                SqlConnection tempConnection = DictionaryStorage.GetSQLConnection();
+                SqlCommand TruncateTableCommand = new SqlCommand(TruncateTableQuery, tempConnection);
+                tempConnection.Open();
+                SqlDataReader Reader = TruncateTableCommand.ExecuteReader();
+                while (Reader.Read())
                 {
-                    TargetString += (char)LargeAlphabet;
-                }
-                for (int smallAlphabet = 97; smallAlphabet <= 122; smallAlphabet++)
-                {
-                    TargetString += (char)smallAlphabet;
-                }
-                for (int Numeric = 48; Numeric <= 57; Numeric++)
-                {
-                    TargetString += (char)Numeric;
-                }
-                for (int Symbol = 32; Symbol <= 47; Symbol++)
-                {
-                    TargetString += (char)Symbol;
-                }
-                for (int Symbol = 58; Symbol <= 64; Symbol++)
-                {
-                    TargetString += (char)Symbol;
-                }
-                for (int Symbol = 91; Symbol <= 96; Symbol++)
-                {
-                    TargetString += (char)Symbol;
-                }
-                for (int Symbol = 123; Symbol <= 126; Symbol++)
-                {
-                    TargetString += (char)Symbol;
-                }
-                foreach(char TargetCharacter in TargetString)
-                {
-                    string truncateQuery = String.Format("truncate table RAINBOW_{0}", (int)TargetCharacter);
-                    Console.WriteLine(truncateQuery);
-                    StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(truncateQuery);
+                    Console.WriteLine(Reader[0]);
+                    StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(Reader[0].ToString());
                     if (SO_AddRecord.Status == StatusCode.FAILURE)
                     {
                         Console.WriteLine(SO_AddRecord.ErrorMessage);
                     }
                 }
+                tempConnection.Close();
             }
             catch(Exception e)
             {
