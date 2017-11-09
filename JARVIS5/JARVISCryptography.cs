@@ -93,7 +93,7 @@ namespace JARVIS5
 	                    [{2}] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
                 IndexCreationQueries.Add("IndexWordQuery",
-                    @"CREATE NONCLUSTERED INDEX [IX_WORD_{0}_{1}_{2}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
+                    @"CREATE UNIQUE INDEX [IX_WORD_{0}_{1}_{2}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
                     (
                         [Word] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
