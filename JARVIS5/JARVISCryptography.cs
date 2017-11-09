@@ -64,7 +64,7 @@ namespace JARVIS5
                     "TableCreateQuery",
                     @"CREATE TABLE [dbo].[RAINBOW_{0}_{3}_{1}](
 	                    [ID] [int] IDENTITY(1,1) NOT NULL,
-	                    [Word] [varchar](20) NOT NULL,
+	                    [Word] [varchar](20) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
 	                    [FirstLetter] [varchar](1) NOT NULL,
 	                    [LetterCount] [int] NOT NULL,
 	                    [{1}] [varchar]({2}) NULL,
@@ -135,7 +135,7 @@ namespace JARVIS5
 
                         foreach (KeyValuePair<string, string> HashType in HashTypes)
                         {
-                            for (int letterCount = 1; letterCount < wordLength; letterCount++)
+                            for (int letterCount = 1; letterCount <= wordLength; letterCount++)
                             {
                                 Console.WriteLine("Creating Table RAINBOW_{1}_{3}_{2}", Query.Key.Substring(0, 5), (int)Character, HashType.Key, letterCount);
                                 Console.WriteLine(String.Format(Query.Value, (int)Character, HashType.Key, HashType.Value, letterCount));
