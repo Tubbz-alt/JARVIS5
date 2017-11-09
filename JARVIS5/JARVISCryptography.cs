@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Numerics;
 namespace JARVIS5
 {
     public static class JARVISCryptography
@@ -22,7 +22,7 @@ namespace JARVIS5
             }
             catch(Exception e)
             {
-
+                
             }
             return SO;
         }
@@ -47,88 +47,51 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
-                var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
-                var q = alphabet.Select(x => x.ToString());
-                int size = Convert.ToInt32(WordLength);
-                for (int i = 0; i < size - 1; i++)
-                    q = q.SelectMany(x => alphabet, (x, y) => x + y);
-                
-                foreach (var item in q)
-                {
-                    string insertQuery = String.Format("insert into Dictonary values ('{0}','{1}',{2})", item, item[0], item.Length);
-                    DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
-                    Console.WriteLine(item);
-                }
-            }
-            catch(Exception e)
-            {
-                SO = new StatusObject(StatusCode.FAILURE, "StringPermutationError", e.Message, e.ToString());
-            }
-            return SO;
-        }
-        public static StatusObject BuildStringPermutationTable(JARVISDataSource DictionaryStorage)
-        {
-            StatusObject SO = new StatusObject();
-            try
-            {
                 Dictionary<string, string> TableCreationQueries = new Dictionary<string, string>();
+                Dictionary<string, string> IndexCreationQueries = new Dictionary<string, string>();
+                Dictionary<string, string> HashTypes = new Dictionary<string, string>()
+                {
+                    { "MD5","32" },
+                    { "SHA","40" },
+                    { "SHA1","40" },
+                    { "SHA2_256","64" },
+                    { "SHA2_512","128" }
+                };
+                int wordLength = Convert.ToInt32(WordLength);
                 TableCreationQueries.Add(
                     "TableCreateQuery",
-                    @"CREATE TABLE [dbo].[RAINBOW_{0}](
+                    @"CREATE TABLE [dbo].[RAINBOW_{0}_{3}_{1}](
 	                    [ID] [int] IDENTITY(1,1) NOT NULL,
 	                    [Word] [varchar](20) NOT NULL,
 	                    [FirstLetter] [varchar](1) NOT NULL,
 	                    [LetterCount] [int] NOT NULL,
-	                    [MD5] [varchar](32) NULL,
-	                    [SHA] [varchar](40) NULL,
-	                    [SHA1] [varchar](40) NULL,
-	                    [SHA2_256] [varchar](64) NULL,
-	                    [SHA2_512] [varchar](128) NULL,
-                     CONSTRAINT [PK_RAINBOW_{0}] PRIMARY KEY CLUSTERED 
+	                    [{1}] [varchar]({2}) NULL,
+                     CONSTRAINT [PK_RAINBOW_{0}_{3}_{1}] PRIMARY KEY CLUSTERED 
                     (
 	                    [ID] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                     ) ON [PRIMARY]");
-                TableCreationQueries.Add(
-                    "IndexFirstLetterQuery",
-                    @"CREATE NONCLUSTERED INDEX [IX_FIRSTLETTER_{0}] ON [dbo].[RAINBOW_{0}]
+
+                IndexCreationQueries.Add(
+                    "FirstLetter",
+                    @"CREATE NONCLUSTERED INDEX [IX_FIRSTLETTER_{0}_{1}_{2}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
                     (
 	                    [FirstLetter] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add(
-                    "IndexLetterCountQuery",
-                    @"CREATE NONCLUSTERED INDEX [IX_LETTERCOUNT_{0}] ON [dbo].[RAINBOW_{0}]
+                IndexCreationQueries.Add(
+                    "LetterCount",
+                    @"CREATE NONCLUSTERED INDEX [IX_LETTERCOUNT_{0}_{1}_{2}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
                     (
 	                    [LetterCount] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add(
-                    "IndexMD5Query",
-                    @"CREATE NONCLUSTERED INDEX [IX_MD5_{0}] ON [dbo].[RAINBOW_{0}]
+                IndexCreationQueries.Add(
+                    "HashQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_{2}_{0}_{1}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
                     (
-	                    [MD5] ASC
+	                    [{2}] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add("IndexSHAQuery",
-                    @"CREATE NONCLUSTERED INDEX [IX_SHA_{0}] ON [dbo].[RAINBOW_{0}]
-                    (
-	                    [SHA] ASC
-                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add("IndexSHA1Query",
-                    @"CREATE NONCLUSTERED INDEX [IX_SHA1_{0}] ON [dbo].[RAINBOW_{0}]
-                    (
-	                    [SHA1] ASC
-                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add("IndexSHA2_256Query",
-                    @"CREATE NONCLUSTERED INDEX [IX_SHA2_256_{0}] ON [dbo].[RAINBOW_{0}]
-                    (
-	                    [SHA2_256] ASC
-                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add("IndexSHA2_512Query",
-                    @"CREATE NONCLUSTERED INDEX [IX_SHA2_512_{0}] ON [dbo].[RAINBOW_{0}]
-                    (
-	                    [SHA2_512] ASC
-                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
-                TableCreationQueries.Add("IndexWordQuery",
-                    @"CREATE NONCLUSTERED INDEX [IX_WORD_{0}] ON [dbo].[RAINBOW_{0}]
+                IndexCreationQueries.Add("IndexWordQuery",
+                    @"CREATE NONCLUSTERED INDEX [IX_WORD_{0}_{1}_{2}] ON [dbo].[RAINBOW_{0}_{1}_{2}]
                     (
                         [Word] ASC
                     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]");
@@ -167,12 +130,36 @@ namespace JARVIS5
                 {
                     foreach(KeyValuePair<string,string> Query in TableCreationQueries)
                     {
-                        Console.WriteLine("Creating {0} RAINBOW_{1}", Query.Key.Substring(0, 5), (int)Character);
-                        StatusObject SO_CreateTable = DictionaryStorage.ExecuteNonReaderQuery(String.Format(Query.Value, (int)Character));
-                        if (SO_CreateTable.Status == StatusCode.FAILURE)
+
+                        foreach (KeyValuePair<string, string> HashType in HashTypes)
                         {
-                            Console.WriteLine(SO_CreateTable.ErrorMessage);
-                            break;
+                            for (int letterCount = 1; letterCount < wordLength; letterCount++)
+                            {
+                                Console.WriteLine("Creating Table RAINBOW_{1}_{3}_{2}", Query.Key.Substring(0, 5), (int)Character, HashType.Key, letterCount);
+                                Console.WriteLine(String.Format(Query.Value, (int)Character, HashType.Key, HashType.Value, letterCount));
+                                StatusObject SO_CreateTable = DictionaryStorage.ExecuteNonReaderQuery(String.Format(Query.Value, (int)Character, HashType.Key, HashType.Value, letterCount));
+
+                                if (SO_CreateTable.Status == StatusCode.FAILURE)
+                                {
+                                    Console.WriteLine(SO_CreateTable.ErrorMessage);
+                                    break;
+                                }
+                                foreach(KeyValuePair<string,string> IndexQuery in IndexCreationQueries)
+                                {
+                                    StatusObject SO_CreateIndex = DictionaryStorage.ExecuteNonReaderQuery(
+                                    String.Format(
+                                        IndexQuery.Value,
+                                        (int)Character,
+                                        letterCount,
+                                        HashType.Key));
+                                    if (SO_CreateIndex.Status == StatusCode.FAILURE)
+                                    {
+                                        Console.WriteLine(SO_CreateIndex.ErrorMessage);
+                                        break;
+                                    }
+                                }
+                                
+                            }
                         }
                     }
                 }
@@ -188,6 +175,14 @@ namespace JARVIS5
             StatusObject SO = new StatusObject();
             try
             {
+                Dictionary<string, string> HashTypes = new Dictionary<string, string>()
+                {
+                    { "MD5","32" },
+                    { "SHA","40" },
+                    { "SHA1","40" },
+                    { "SHA2_256","64" },
+                    { "SHA2_512","128" }
+                };
                 string TargetString = "";
                 for (int LargeAlphabet = 65; LargeAlphabet <= 90; LargeAlphabet++)
                 {
@@ -236,28 +231,29 @@ namespace JARVIS5
                 {
                     if(item[0] == FirstCharacter)
                     {
-                        string insertQuery = String.Format(
-                            @"insert into RAINBOW_{3} 
-                            (Word,FirstLetter,LetterCount,MD5,SHA,SHA1,SHA2_256,SHA2_512) 
+                        foreach(KeyValuePair<string,string> HashType in HashTypes)
+                        {
+                            string insertQuery = String.Format(
+                            @"insert into RAINBOW_{3}_{2}_{4} 
+                            (Word,FirstLetter,LetterCount,{4}) 
                             values (
                                 '{0}',
                                 '{1}',
                                 {2},
-                                convert(varchar(32),hashbytes('MD5','{0}'),2),
-                                convert(varchar(40),hashbytes('SHA','{0}'),2),
-                                convert(varchar(40),hashbytes('SHA1','{0}'),2),
-                                convert(varchar(64),hashbytes('SHA2_256','{0}'),2),
-                                convert(varchar(128),hashbytes('SHA2_512','{0}'),2))",
+                                convert(varchar({5}),hashbytes('{4}','{0}'),2))",
                             item.Replace("'", "''"),
                             item[0] == '\'' ? "''" : item[0].ToString(),
                             item.Length,
-                            (int)item[0]);
-                        Console.WriteLine(insertQuery);
-                        StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
-                        while (SO_AddRecord.Status == StatusCode.FAILURE)
-                        {
-                            Console.WriteLine(SO_AddRecord.ErrorMessage);
-                            SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
+                            (int)item[0],
+                            HashType.Key,
+                            HashType.Value);
+                            Console.WriteLine(insertQuery);
+                            StatusObject SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
+                            while (SO_AddRecord.Status == StatusCode.FAILURE)
+                            {
+                                Console.WriteLine(SO_AddRecord.ErrorMessage);
+                                SO_AddRecord = DictionaryStorage.ExecuteNonReaderQuery(insertQuery);
+                            }
                         }
                     }
                     else

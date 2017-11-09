@@ -32,5 +32,13 @@ namespace JARVIS5
                 {'*', "*"},
                 {'?', "?" }
         };
+        public static Dictionary<string, string> SqlServerHashTypes = new Dictionary<string, string>()
+        {
+            { "MD5","32" },
+            { "SHA","40" },
+            { "SHA1","40" },
+            { "SHA2_256","64" },
+            { "SHA2_512","128" }
+        };
     }
 }

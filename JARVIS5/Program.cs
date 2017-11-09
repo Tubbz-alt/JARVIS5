@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
+using System.Numerics;
 namespace JARVIS5
 {
     class Program
@@ -167,7 +168,8 @@ namespace JARVIS5
                             string wordLength = commandParameters.ElementAtOrDefault(4);
                             if(secondaryCommand == "buildtables")
                             {
-                                StatusObject SO_BuildTable = JARVISCryptography.BuildStringPermutationTable(userDefinedDataSources[targetDataSource]);
+                                wordLength = commandParameters.ElementAtOrDefault(3);
+                                StatusObject SO_BuildTable = JARVISCryptography.BuildStringPermutationTable(wordLength, userDefinedDataSources[targetDataSource]);
                                 if (SO_BuildTable.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(SO_BuildTable.ErrorStackTrace);
