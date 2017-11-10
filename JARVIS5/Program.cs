@@ -165,11 +165,13 @@ namespace JARVIS5
                             string secondaryCommand = commandParameters.ElementAtOrDefault(1);
                             string targetDataSource = commandParameters.ElementAtOrDefault(2);
                             string firstLetter = commandParameters.ElementAtOrDefault(3);
-                            string wordLength = commandParameters.ElementAtOrDefault(4);
+                            string MinWordLength = commandParameters.ElementAtOrDefault(4);
+                            string MaxWordLength = commandParameters.ElementAtOrDefault(5);
                             if(secondaryCommand == "buildtables")
                             {
-                                wordLength = commandParameters.ElementAtOrDefault(3);
-                                StatusObject SO_BuildTable = JARVISCryptography.BuildStringPermutationTable(wordLength, userDefinedDataSources[targetDataSource]);
+                                MinWordLength = commandParameters.ElementAtOrDefault(3);
+                                MaxWordLength = commandParameters.ElementAtOrDefault(4);
+                                StatusObject SO_BuildTable = JARVISCryptography.BuildStringPermutationTable(MinWordLength, MaxWordLength, userDefinedDataSources[targetDataSource]);
                                 if (SO_BuildTable.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(SO_BuildTable.ErrorStackTrace);
@@ -178,7 +180,7 @@ namespace JARVIS5
                             else if (secondaryCommand == "populatetables")
                             {
                                 JARVISDataSource Storage = userDefinedDataSources[targetDataSource];
-                                StatusObject DictionaryBuilder = JARVISCryptography.PopulateStringPermutationTable(wordLength.ToString(), firstLetter, Storage);
+                                StatusObject DictionaryBuilder = JARVISCryptography.PopulateStringPermutationTable(MinWordLength.ToString(), firstLetter, Storage);
                                 if (DictionaryBuilder.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(DictionaryBuilder.ErrorStackTrace);
@@ -186,8 +188,8 @@ namespace JARVIS5
                             }
                             else if (secondaryCommand == "buildbatchfiles")
                             {
-                                wordLength = commandParameters.ElementAtOrDefault(3);
-                                StatusObject SO_BuildBatchFiles = JARVISCryptography.CreateStringPermutationBatchFiles(wordLength, targetDataSource);
+                                MinWordLength = commandParameters.ElementAtOrDefault(3);
+                                StatusObject SO_BuildBatchFiles = JARVISCryptography.CreateStringPermutationBatchFiles(MinWordLength, targetDataSource);
                                 if (SO_BuildBatchFiles.Status == StatusCode.FAILURE)
                                 {
                                     Console.WriteLine(SO_BuildBatchFiles.ErrorStackTrace);

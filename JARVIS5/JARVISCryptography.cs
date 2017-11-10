@@ -44,7 +44,7 @@ namespace JARVIS5
             }
             return SO;
         }
-        public static StatusObject BuildStringPermutationTable(string WordLength, JARVISDataSource DictionaryStorage)
+        public static StatusObject BuildStringPermutationTable(string MinWordLength, string MaxWordLength, JARVISDataSource DictionaryStorage)
         {
             StatusObject SO = new StatusObject();
             try
@@ -59,7 +59,8 @@ namespace JARVIS5
                     { "SHA2_256","64" },
                     { "SHA2_512","128" }
                 };
-                int wordLength = Convert.ToInt32(WordLength);
+                int minWordLength = Convert.ToInt32(MinWordLength);
+                int maxWordLength = Convert.ToInt32(MaxWordLength);
                 TableCreationQueries.Add(
                     "TableCreateQuery",
                     @"CREATE TABLE [dbo].[RAINBOW_{0}_{3}_{1}](
@@ -135,7 +136,7 @@ namespace JARVIS5
 
                         foreach (KeyValuePair<string, string> HashType in HashTypes)
                         {
-                            for (int letterCount = 1; letterCount <= wordLength; letterCount++)
+                            for (int letterCount = minWordLength; letterCount <= maxWordLength; letterCount++)
                             {
                                 Console.WriteLine("Creating Table RAINBOW_{1}_{3}_{2}", Query.Key.Substring(0, 5), (int)Character, HashType.Key, letterCount);
                                 Console.WriteLine(String.Format(Query.Value, (int)Character, HashType.Key, HashType.Value, letterCount));
